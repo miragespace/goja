@@ -23,10 +23,9 @@ type compiledExprOrRef interface {
 }
 
 type compiledCallExpr struct {
-	baseCompiledExpr
-	args   []compiledExpr
 	callee compiledExpr
-
+	baseCompiledExpr
+	args       []compiledExpr
 	isVariadic bool
 }
 
@@ -35,23 +34,23 @@ type compiledNewExpr struct {
 }
 
 type compiledObjectLiteral struct {
-	baseCompiledExpr
 	expr *ast.ObjectLiteral
+	baseCompiledExpr
 }
 
 type compiledArrayLiteral struct {
-	baseCompiledExpr
 	expr *ast.ArrayLiteral
+	baseCompiledExpr
 }
 
 type compiledRegexpLiteral struct {
-	baseCompiledExpr
 	expr *ast.RegExpLiteral
+	baseCompiledExpr
 }
 
 type compiledLiteral struct {
-	baseCompiledExpr
 	val Value
+	baseCompiledExpr
 }
 
 type compiledTemplateLiteral struct {
@@ -62,19 +61,20 @@ type compiledTemplateLiteral struct {
 }
 
 type compiledAssignExpr struct {
+	left  compiledExpr
+	right compiledExpr
 	baseCompiledExpr
-	left, right compiledExpr
-	operator    token.Token
+	operator token.Token
 }
 
 type compiledObjectAssignmentPattern struct {
-	baseCompiledExpr
 	expr *ast.ObjectPattern
+	baseCompiledExpr
 }
 
 type compiledArrayAssignmentPattern struct {
-	baseCompiledExpr
 	expr *ast.ArrayPattern
+	baseCompiledExpr
 }
 
 type deleteGlobalExpr struct {
@@ -94,13 +94,14 @@ type deletePropExpr struct {
 }
 
 type deleteElemExpr struct {
+	left   compiledExpr
+	member compiledExpr
 	baseCompiledExpr
-	left, member compiledExpr
 }
 
 type constantExpr struct {
-	baseCompiledExpr
 	val Value
+	baseCompiledExpr
 }
 
 type baseCompiledExpr struct {
@@ -114,13 +115,13 @@ type compiledIdentifierExpr struct {
 }
 
 type compiledAwaitExpression struct {
-	baseCompiledExpr
 	arg compiledExpr
+	baseCompiledExpr
 }
 
 type compiledYieldExpression struct {
+	arg compiledExpr
 	baseCompiledExpr
-	arg      compiledExpr
 	delegate bool
 }
 
@@ -137,24 +138,25 @@ const (
 )
 
 type compiledFunctionLiteral struct {
+	name          *ast.Identifier
+	parameterList *ast.ParameterList
+	strict        *ast.StringLiteral
+	lhsName       unistring.String
 	baseCompiledExpr
-	name            *ast.Identifier
-	parameterList   *ast.ParameterList
-	body            []ast.Statement
 	source          string
+	body            []ast.Statement
 	declarationList []*ast.VariableDeclaration
-	lhsName         unistring.String
-	strict          *ast.StringLiteral
 	homeObjOffset   uint32
 	typ             funcType
 	isExpr          bool
-
-	isAsync, isGenerator bool
+	isAsync         bool
+	isGenerator     bool
 }
 
 type compiledBracketExpr struct {
+	left   compiledExpr
+	member compiledExpr
 	baseCompiledExpr
-	left, member compiledExpr
 }
 
 type compiledThisExpr struct {
@@ -175,36 +177,42 @@ type compiledSequenceExpr struct {
 }
 
 type compiledUnaryExpr struct {
+	operand compiledExpr
 	baseCompiledExpr
-	operand  compiledExpr
 	operator token.Token
 	postfix  bool
 }
 
 type compiledConditionalExpr struct {
+	test       compiledExpr
+	consequent compiledExpr
+	alternate  compiledExpr
 	baseCompiledExpr
-	test, consequent, alternate compiledExpr
 }
 
 type compiledLogicalOr struct {
+	left  compiledExpr
+	right compiledExpr
 	baseCompiledExpr
-	left, right compiledExpr
 }
 
 type compiledCoalesce struct {
+	left  compiledExpr
+	right compiledExpr
 	baseCompiledExpr
-	left, right compiledExpr
 }
 
 type compiledLogicalAnd struct {
+	left  compiledExpr
+	right compiledExpr
 	baseCompiledExpr
-	left, right compiledExpr
 }
 
 type compiledBinaryExpr struct {
+	left  compiledExpr
+	right compiledExpr
 	baseCompiledExpr
-	left, right compiledExpr
-	operator    token.Token
+	operator token.Token
 }
 
 type compiledEnumGetExpr struct {
@@ -212,23 +220,23 @@ type compiledEnumGetExpr struct {
 }
 
 type defaultDeleteExpr struct {
-	baseCompiledExpr
 	expr compiledExpr
+	baseCompiledExpr
 }
 
 type compiledSpreadCallArgument struct {
-	baseCompiledExpr
 	expr compiledExpr
+	baseCompiledExpr
 }
 
 type compiledOptionalChain struct {
-	baseCompiledExpr
 	expr compiledExpr
+	baseCompiledExpr
 }
 
 type compiledOptional struct {
-	baseCompiledExpr
 	expr compiledExpr
+	baseCompiledExpr
 }
 
 func (e *defaultDeleteExpr) emitGetter(putOnStack bool) {
@@ -797,8 +805,8 @@ func (e *compiledPrivateDotExpr) emitRef() {
 }
 
 type compiledSuperBracketExpr struct {
-	baseCompiledExpr
 	member compiledExpr
+	baseCompiledExpr
 }
 
 func (e *compiledSuperBracketExpr) emitGetter(putOnStack bool) {
@@ -1810,13 +1818,13 @@ func (c *compiler) compileFunctionLiteral(v *ast.FunctionLiteral, isExpr bool) *
 }
 
 type compiledClassLiteral struct {
-	baseCompiledExpr
-	name       *ast.Identifier
 	superClass compiledExpr
-	body       []ast.ClassElement
-	lhsName    unistring.String
-	source     string
-	isExpr     bool
+	name       *ast.Identifier
+	baseCompiledExpr
+	lhsName unistring.String
+	source  string
+	body    []ast.ClassElement
+	isExpr  bool
 }
 
 func (c *compiler) processKey(expr ast.Expression) (val unistring.String, computed bool) {
@@ -1843,10 +1851,10 @@ func (e *compiledClassLiteral) processClassKey(expr ast.Expression) (privateName
 }
 
 type clsElement struct {
-	key         unistring.String
-	privateName *privateName
 	initializer compiledExpr
+	privateName *privateName
 	body        *compiledFunctionLiteral
+	key         unistring.String
 	computed    bool
 }
 
@@ -2822,9 +2830,9 @@ func (c *compiler) compileBinaryExpression(v *ast.BinaryExpression) compiledExpr
 }
 
 type compiledPrivateIn struct {
-	baseCompiledExpr
-	id    unistring.String
 	right compiledExpr
+	baseCompiledExpr
+	id unistring.String
 }
 
 func (e *compiledPrivateIn) emitGetter(putOnStack bool) {
@@ -3466,9 +3474,9 @@ func (e *compiledArrayAssignmentPattern) emitSetter(valueExpr compiledExpr, putO
 }
 
 type compiledPatternInitExpr struct {
-	baseCompiledExpr
-	emitSrc func()
 	def     compiledExpr
+	emitSrc func()
+	baseCompiledExpr
 }
 
 func (e *compiledPatternInitExpr) emitGetter(putOnStack bool) {
@@ -3504,9 +3512,9 @@ func (c *compiler) compilePatternInitExpr(emitSrc func(), def ast.Expression, id
 }
 
 type compiledEmitterExpr struct {
-	baseCompiledExpr
 	emitter      func()
 	namedEmitter func(name unistring.String)
+	baseCompiledExpr
 }
 
 func (e *compiledEmitterExpr) emitGetter(putOnStack bool) {

@@ -2,8 +2,9 @@ package goja
 
 import (
 	"fmt"
-	"github.com/dop251/goja/token"
 	"sort"
+
+	"github.com/dop251/goja/token"
 
 	"github.com/dop251/goja/ast"
 	"github.com/dop251/goja/file"
@@ -89,8 +90,8 @@ type compiler struct {
 
 type binding struct {
 	scope        *scope
-	name         unistring.String
 	accessPoints map[*scope]*[]int
+	name         unistring.String
 	isConst      bool
 	isStrict     bool
 	isArg        bool
@@ -308,13 +309,13 @@ type scope struct {
 }
 
 type block struct {
-	typ        blockType
+	outer      *block
+	breaking   *block
 	label      unistring.String
-	cont       int
 	breaks     []int
 	conts      []int
-	outer      *block
-	breaking   *block // set when the 'finally' block is an empty break statement sequence
+	typ        blockType
+	cont       int
 	needResult bool
 }
 
@@ -1366,10 +1367,9 @@ type privateEnvRegistry struct {
 type classScope struct {
 	c            *compiler
 	privateNames map[unistring.String]*privateName
-
-	instanceEnv, staticEnv privateEnvRegistry
-
-	outer *classScope
+	outer        *classScope
+	instanceEnv  privateEnvRegistry
+	staticEnv    privateEnvRegistry
 }
 
 func (r *privateEnvRegistry) createPrivateMethodId(name unistring.String) int {

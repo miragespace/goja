@@ -10,9 +10,9 @@ import (
 )
 
 type objectGoSlice struct {
-	baseObject
-	data       *[]interface{}
 	lengthProp valueProperty
+	data       *[]interface{}
+	baseObject
 }
 
 func (r *Runtime) newObjectGoSlice(data *[]interface{}) *objectGoSlice {

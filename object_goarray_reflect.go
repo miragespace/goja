@@ -8,12 +8,10 @@ import (
 )
 
 type objectGoArrayReflect struct {
-	objectGoReflect
+	putIdx     func(idx int, v Value, throw bool) bool
 	lengthProp valueProperty
-
 	valueCache valueArrayCache
-
-	putIdx func(idx int, v Value, throw bool) bool
+	objectGoReflect
 }
 
 type valueArrayCache []reflectValueWrapper

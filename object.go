@@ -46,23 +46,22 @@ var (
 )
 
 type Object struct {
-	id      uint64
-	runtime *Runtime
-	self    objectImpl
-
+	self     objectImpl
+	runtime  *Runtime
 	weakRefs map[weakMap]Value
+	id       uint64
 }
 
 type iterNextFunc func() (propIterItem, iterNextFunc)
 
 type PropertyDescriptor struct {
+	Value        Value
+	Getter       Value
+	Setter       Value
 	jsDescriptor *Object
-
-	Value Value
-
-	Writable, Configurable, Enumerable Flag
-
-	Getter, Setter Value
+	Writable     Flag
+	Configurable Flag
+	Enumerable   Flag
 }
 
 func (p *PropertyDescriptor) Empty() bool {
@@ -216,29 +215,26 @@ type objectImpl interface {
 }
 
 type baseObject struct {
-	class      string
-	val        *Object
-	prototype  *Object
-	extensible bool
-
-	values    map[unistring.String]Value
-	propNames []unistring.String
-
-	lastSortedPropLen, idxPropCount int
-
-	symValues *orderedMap
-
-	privateElements map[*privateEnvType]*privateElements
+	val               *Object
+	prototype         *Object
+	values            map[unistring.String]Value
+	symValues         *orderedMap
+	privateElements   map[*privateEnvType]*privateElements
+	class             string
+	propNames         []unistring.String
+	lastSortedPropLen int
+	idxPropCount      int
+	extensible        bool
 }
 
 type guardedObject struct {
-	baseObject
 	guardedProps map[unistring.String]struct{}
+	baseObject
 }
 
 type primitiveValueObject struct {
-	baseObject
 	pValue Value
+	baseObject
 }
 
 func (o *primitiveValueObject) export(*objectExportCtx) interface{} {
@@ -256,8 +252,8 @@ type FunctionCall struct {
 
 type ConstructorCall struct {
 	This      *Object
-	Arguments []Value
 	NewTarget *Object
+	Arguments []Value
 }
 
 func (f FunctionCall) Argument(idx int) Value {

@@ -21,16 +21,12 @@ const (
 type valueStack []Value
 
 type stash struct {
-	values    []Value
-	extraArgs []Value
 	names     map[unistring.String]uint32
 	obj       *Object
-
-	outer *stash
-
-	// If this is a top-level function stash, sets the type of the function. If set, dynamic var declarations
-	// created by direct eval go here.
-	funcType funcType
+	outer     *stash
+	values    []Value
+	extraArgs []Value
+	funcType  funcType
 }
 
 type context struct {
@@ -44,24 +40,24 @@ type context struct {
 }
 
 type tryFrame struct {
-	// holds an uncaught exception for the 'finally' block
-	exception *Exception
-
-	callStackLen, iterLen, refLen uint32
-
-	sp      int32
-	stash   *stash
-	privEnv *privateEnv
-
-	catchPos, finallyPos, finallyRet int32
+	exception    *Exception
+	stash        *stash
+	privEnv      *privateEnv
+	callStackLen uint32
+	iterLen      uint32
+	refLen       uint32
+	sp           int32
+	catchPos     int32
+	finallyPos   int32
+	finallyRet   int32
 }
 
 type execCtx struct {
-	context
 	stack     []Value
 	tryStack  []tryFrame
 	iterStack []iterStackItem
 	refStack  []ref
+	context
 }
 
 func (vm *vm) suspend(ectx *execCtx, tryStackLen, iterStackLen, refStackLen uint32) {
@@ -121,8 +117,8 @@ type ref interface {
 }
 
 type stashRef struct {
-	n   unistring.String
 	v   *[]Value
+	n   unistring.String
 	idx int
 }
 
@@ -208,9 +204,9 @@ func (r *stashRefConst) set(v Value) {
 }
 
 type objRef struct {
+	this    Value
 	base    *Object
 	name    unistring.String
-	this    Value
 	strict  bool
 	binding bool
 }
@@ -307,32 +303,28 @@ func (r *unresolvedRef) refname() unistring.String {
 }
 
 type vm struct {
-	r            *Runtime
-	prg          *Program
-	pc           int
-	stack        valueStack
-	sp, sb, args int
-
-	stash     *stash
-	privEnv   *privateEnv
-	callStack []context
-	iterStack []iterStackItem
-	refStack  []ref
-	tryStack  []tryFrame
-	newTarget Value
-	result    Value
-
+	interruptLock    sync.Mutex
+	newTarget        Value
+	interruptVal     interface{}
+	result           Value
+	prg              *Program
+	profTracker      *profTracker
+	curAsyncRunner   *asyncRunner
+	r                *Runtime
+	stash            *stash
+	privEnv          *privateEnv
+	stack            valueStack
+	refStack         []ref
+	tryStack         []tryFrame
+	iterStack        []iterStackItem
+	callStack        []context
+	sb               int
+	stashAllocs      int
 	maxCallStackSize int
-
-	stashAllocs int
-
-	interrupted   uint32
-	interruptVal  interface{}
-	interruptLock sync.Mutex
-
-	curAsyncRunner *asyncRunner
-
-	profTracker *profTracker
+	args             int
+	sp               int
+	pc               int
+	interrupted      uint32
 }
 
 type instruction interface {

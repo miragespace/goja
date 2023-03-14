@@ -425,6 +425,7 @@ func (r *Runtime) init() {
 	r.now = time.Now
 	r.global.ObjectPrototype = r.newBaseObject(nil, classObject).val
 	r.globalObject = r.NewObject()
+	r.jobQueue = make([]func(), 0, 10)
 
 	r.vm = &vm{
 		r: r,
@@ -2815,8 +2816,8 @@ func (r *Runtime) leave() {
 			job()
 		}
 	}
-	r.jobQueue = nil
-	r.vm.stack = nil
+	r.jobQueue = r.jobQueue[:0]
+	r.vm.stack = r.vm.stack[:0]
 }
 
 // called when the top level function returns (i.e. control is passed outside the Runtime) but it was due to an interrupt

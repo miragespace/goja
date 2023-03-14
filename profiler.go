@@ -22,9 +22,8 @@ const (
 )
 
 type _globalProfiler struct {
-	p profiler
-	w io.Writer
-
+	w       io.Writer
+	p       profiler
 	enabled int32
 }
 
@@ -39,14 +38,14 @@ type profTracker struct {
 
 type profiler struct {
 	mu       sync.Mutex
-	trackers []*profTracker
 	buf      *profBuffer
+	trackers []*profTracker
 	running  bool
 }
 
 type profFunc struct {
-	f    profile.Function
 	locs map[int32]*profile.Location
+	f    profile.Function
 }
 
 type profSampleNode struct {

@@ -166,12 +166,13 @@ func (r *Runtime) builtinJSON_reviveWalk(reviver func(FunctionCall) Value, holde
 }
 
 type _builtinJSON_stringifyContext struct {
+	buf              bytes.Buffer
 	r                *Runtime
+	replacerFunction func(FunctionCall) Value
+	gap              string
+	indent           string
 	stack            []*Object
 	propertyList     []Value
-	replacerFunction func(FunctionCall) Value
-	gap, indent      string
-	buf              bytes.Buffer
 	allAscii         bool
 }
 

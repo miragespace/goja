@@ -7,13 +7,13 @@ import (
 var mapExportType = reflect.TypeOf([][2]interface{}{})
 
 type mapObject struct {
-	baseObject
 	m *orderedMap
+	baseObject
 }
 
 type mapIterObject struct {
-	baseObject
 	iter *orderedMapIter
+	baseObject
 	kind iterationKind
 }
 

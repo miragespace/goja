@@ -12,16 +12,16 @@ import (
 )
 
 type sparseArrayItem struct {
-	idx   uint32
 	value Value
+	idx   uint32
 }
 
 type sparseArrayObject struct {
+	lengthProp valueProperty
+	items      []sparseArrayItem
 	baseObject
-	items          []sparseArrayItem
-	length         uint32
 	propValueCount int
-	lengthProp     valueProperty
+	length         uint32
 }
 
 func (a *sparseArrayObject) findIdx(idx uint32) int {

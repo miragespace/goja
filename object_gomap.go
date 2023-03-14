@@ -7,8 +7,8 @@ import (
 )
 
 type objectGoMapSimple struct {
-	baseObject
 	data map[string]interface{}
+	baseObject
 }
 
 func (o *objectGoMapSimple) init() {

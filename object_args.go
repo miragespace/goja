@@ -8,8 +8,8 @@ type argumentsObject struct {
 }
 
 type mappedProperty struct {
-	valueProperty
 	v *Value
+	valueProperty
 }
 
 func (a *argumentsObject) getStr(name unistring.String, receiver Value) Value {

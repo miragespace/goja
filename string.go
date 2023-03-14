@@ -63,8 +63,8 @@ type valueString interface {
 }
 
 type stringIterObject struct {
-	baseObject
 	reader io.RuneReader
+	baseObject
 }
 
 func isUTF16FirstSurrogate(r rune) bool {
@@ -115,10 +115,10 @@ func (r *Runtime) createStringIterator(s valueString) Value {
 }
 
 type stringObject struct {
-	baseObject
 	value      valueString
-	length     int
 	lengthProp valueProperty
+	baseObject
+	length int
 }
 
 func newStringValue(s string) valueString {

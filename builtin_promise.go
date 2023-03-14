@@ -1,8 +1,9 @@
 package goja
 
 import (
-	"github.com/dop251/goja/unistring"
 	"reflect"
+
+	"github.com/dop251/goja/unistring"
 )
 
 type PromiseState int
@@ -38,11 +39,11 @@ type promiseCapability struct {
 }
 
 type promiseReaction struct {
+	asyncCtx    interface{}
 	capability  *promiseCapability
-	typ         promiseReactionType
 	handler     *jobCallback
 	asyncRunner *asyncRunner
-	asyncCtx    interface{}
+	typ         promiseReactionType
 }
 
 var typePromise = reflect.TypeOf((*Promise)(nil))
@@ -54,12 +55,12 @@ var typePromise = reflect.TypeOf((*Promise)(nil))
 //
 // WARNING: Instances of Promise are not goroutine-safe. See Runtime.NewPromise() for more details.
 type Promise struct {
-	baseObject
-	state            PromiseState
 	result           Value
 	fulfillReactions []*promiseReaction
 	rejectReactions  []*promiseReaction
-	handled          bool
+	baseObject
+	state   PromiseState
+	handled bool
 }
 
 func (p *Promise) State() PromiseState {
@@ -240,6 +241,8 @@ func (r *Runtime) newPromise(proto *Object) *Promise {
 	o.self = po
 	po.prototype = proto
 	po.init()
+	po.fulfillReactions = make([]*promiseReaction, 0, 2)
+	po.rejectReactions = make([]*promiseReaction, 0, 2)
 	return po
 }
 

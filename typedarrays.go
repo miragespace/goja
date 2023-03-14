@@ -25,9 +25,9 @@ var (
 type typedArrayObjectCtor func(buf *arrayBufferObject, offset, length int, proto *Object) *typedArrayObject
 
 type arrayBufferObject struct {
+	data []byte
 	baseObject
 	detached bool
-	data     []byte
 }
 
 // ArrayBuffer is a Go wrapper around ECMAScript ArrayBuffer. Calling Runtime.ToValue() on it
@@ -38,9 +38,10 @@ type ArrayBuffer struct {
 }
 
 type dataViewObject struct {
+	viewedArrayBuf *arrayBufferObject
 	baseObject
-	viewedArrayBuf      *arrayBufferObject
-	byteLen, byteOffset int
+	byteLen    int
+	byteOffset int
 }
 
 type typedArray interface {
@@ -65,12 +66,13 @@ type float32Array []float32
 type float64Array []float64
 
 type typedArrayObject struct {
-	baseObject
+	typedArray     typedArray
 	viewedArrayBuf *arrayBufferObject
 	defaultCtor    *Object
-	length, offset int
-	elemSize       int
-	typedArray     typedArray
+	baseObject
+	length   int
+	offset   int
+	elemSize int
 }
 
 func (a ArrayBuffer) toValue(r *Runtime) Value {

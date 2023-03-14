@@ -102,19 +102,16 @@ func copyReflectValueWrapper(w reflectValueWrapper) {
 }
 
 type objectGoReflect struct {
-	baseObject
-	origValue, fieldsValue reflect.Value
-
-	fieldsInfo  *reflectFieldsInfo
-	methodsInfo *reflectMethodsInfo
-
+	fieldsInfo   *reflectFieldsInfo
+	methodsInfo  *reflectMethodsInfo
+	valueCache   map[string]reflectValueWrapper
+	toString     func() Value
+	valueOf      func() Value
+	toJson       func() interface{}
+	origValue    reflect.Value
+	fieldsValue  reflect.Value
 	methodsValue reflect.Value
-
-	valueCache map[string]reflectValueWrapper
-
-	toString, valueOf func() Value
-
-	toJson func() interface{}
+	baseObject
 }
 
 func (o *objectGoReflect) init() {

@@ -11,8 +11,8 @@ import (
 )
 
 type arrayIterObject struct {
+	obj *Object
 	baseObject
-	obj     *Object
 	nextIdx int64
 	kind    iterationKind
 }
@@ -63,12 +63,12 @@ func (r *Runtime) createArrayIterator(iterObj *Object, kind iterationKind) Value
 }
 
 type arrayObject struct {
+	lengthProp valueProperty
+	values     []Value
 	baseObject
-	values         []Value
-	length         uint32
 	objCount       int
 	propValueCount int
-	lengthProp     valueProperty
+	length         uint32
 }
 
 func (a *arrayObject) init() {

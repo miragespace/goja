@@ -2,13 +2,14 @@ package goja
 
 import (
 	"fmt"
-	"github.com/dlclark/regexp2"
-	"github.com/dop251/goja/unistring"
 	"io"
 	"regexp"
 	"sort"
 	"strings"
 	"unicode/utf16"
+
+	"github.com/dlclark/regexp2"
+	"github.com/dop251/goja/unistring"
 )
 
 type regexp2MatchCache struct {
@@ -59,12 +60,14 @@ func (rd *arrayRuneReader) ReadRune() (r rune, size int, err error) {
 
 // Not goroutine-safe. Use regexpPattern.clone()
 type regexpPattern struct {
-	src string
-
-	global, ignoreCase, multiline, sticky, unicode bool
-
 	regexpWrapper  *regexpWrapper
 	regexp2Wrapper *regexp2Wrapper
+	src            string
+	global         bool
+	ignoreCase     bool
+	multiline      bool
+	sticky         bool
+	unicode        bool
 }
 
 func compileRegexp2(src string, multiline, ignoreCase bool) (*regexp2Wrapper, error) {
@@ -188,10 +191,9 @@ func (p *regexpPattern) clone() *regexpPattern {
 }
 
 type regexpObject struct {
-	baseObject
-	pattern *regexpPattern
 	source  valueString
-
+	pattern *regexpPattern
+	baseObject
 	standard bool
 }
 

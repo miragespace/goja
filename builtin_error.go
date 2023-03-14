@@ -5,8 +5,8 @@ import "github.com/dop251/goja/unistring"
 const propNameStack = "stack"
 
 type errorObject struct {
+	stack []StackFrame
 	baseObject
-	stack          []StackFrame
 	stackPropAdded bool
 }
 

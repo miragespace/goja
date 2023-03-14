@@ -7,9 +7,9 @@ import (
 )
 
 type objectGoMapReflect struct {
+	keyType   reflect.Type
+	valueType reflect.Type
 	objectGoReflect
-
-	keyType, valueType reflect.Type
 }
 
 func (o *objectGoMapReflect) init() {

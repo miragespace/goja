@@ -2,11 +2,12 @@ package goja
 
 import (
 	"fmt"
-	"github.com/dop251/goja/parser"
 	"regexp"
 	"strings"
 	"unicode/utf16"
 	"unicode/utf8"
+
+	"github.com/dop251/goja/parser"
 )
 
 func (r *Runtime) newRegexpObject(proto *Object) *regexpObject {
@@ -800,10 +801,12 @@ func (r *Runtime) createRegExpStringIterator(matcher *Object, s valueString, glo
 }
 
 type regExpStringIterObject struct {
+	s       valueString
+	matcher *Object
 	baseObject
-	matcher                   *Object
-	s                         valueString
-	global, fullUnicode, done bool
+	global      bool
+	fullUnicode bool
+	done        bool
 }
 
 // RegExpExec as defined in 21.2.5.2.1

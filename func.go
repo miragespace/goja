@@ -57,19 +57,16 @@ type funcObjectImpl interface {
 }
 
 type baseFuncObject struct {
-	baseObject
-
 	lenProp valueProperty
+	baseObject
 }
 
 type baseJsFuncObject struct {
-	baseFuncObject
-
 	stash   *stash
 	privEnv *privateEnv
-
-	prg    *Program
-	src    string
+	prg     *Program
+	src     string
+	baseFuncObject
 	strict bool
 }
 
@@ -86,19 +83,17 @@ type asyncFuncObject struct {
 }
 
 type classFuncObject struct {
-	baseJsFuncObject
-	initFields   *Program
-	computedKeys []Value
-
+	initFields     *Program
 	privateEnvType *privateEnvType
+	computedKeys   []Value
 	privateMethods []Value
-
+	baseJsFuncObject
 	derived bool
 }
 
 type methodFuncObject struct {
-	baseJsFuncObject
 	homeObject *Object
+	baseJsFuncObject
 }
 
 type generatorMethodFuncObject struct {
@@ -110,9 +105,9 @@ type asyncMethodFuncObject struct {
 }
 
 type arrowFuncObject struct {
-	baseJsFuncObject
-	funcObj   *Object
 	newTarget Value
+	funcObj   *Object
+	baseJsFuncObject
 }
 
 type asyncArrowFuncObject struct {
@@ -120,20 +115,19 @@ type asyncArrowFuncObject struct {
 }
 
 type nativeFuncObject struct {
-	baseFuncObject
-
 	f         func(FunctionCall) Value
 	construct func(args []Value, newTarget *Object) *Object
+	baseFuncObject
 }
 
 type wrappedFuncObject struct {
-	nativeFuncObject
 	wrapped reflect.Value
+	nativeFuncObject
 }
 
 type boundFuncObject struct {
-	nativeFuncObject
 	wrapped *Object
+	nativeFuncObject
 }
 
 type generatorState uint8
@@ -148,10 +142,10 @@ const (
 )
 
 type generatorObject struct {
-	baseObject
-	gen       generator
 	delegated *iteratorRecord
-	state     generatorState
+	gen       generator
+	baseObject
+	state generatorState
 }
 
 func (f *nativeFuncObject) source() valueString {
@@ -667,10 +661,10 @@ func (f *asyncFuncObject) vmCall(vm *vm, n int) {
 }
 
 type asyncRunner struct {
-	gen        generator
 	promiseCap *promiseCapability
 	f          *Object
 	vmCall     func(*vm, int)
+	gen        generator
 }
 
 func (ar *asyncRunner) onFulfilled(call FunctionCall) Value {
@@ -736,10 +730,11 @@ func (ar *asyncRunner) start(nArgs int) {
 }
 
 type generator struct {
-	ctx execCtx
-	vm  *vm
-
-	tryStackLen, iterStackLen, refStackLen uint32
+	vm           *vm
+	ctx          execCtx
+	tryStackLen  uint32
+	iterStackLen uint32
+	refStackLen  uint32
 }
 
 func (g *generator) storeLengths() {

@@ -114,8 +114,8 @@ type valueUndefined struct {
 // Well-known Symbols can be accessed using Sym* package variables (SymIterator, etc...)
 // Symbols can be shared by multiple Runtimes.
 type Symbol struct {
-	h    uintptr
 	desc valueString
+	h    uintptr
 }
 
 type valueUnresolved struct {
@@ -129,12 +129,12 @@ type memberUnresolved struct {
 
 type valueProperty struct {
 	value        Value
+	getterFunc   *Object
+	setterFunc   *Object
 	writable     bool
 	configurable bool
 	enumerable   bool
 	accessor     bool
-	getterFunc   *Object
-	setterFunc   *Object
 }
 
 var (
